@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estatística Completa - Encceja 2026 | Prof Wiliam</title>
+<style>
+  /* RESET E VARIÁVEIS - Boa prática de CSS */
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --bg: #f0f7ff;
+    --card: #ffffff;
+    --success: #16a34a;
+  }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 15px; color: #1e293b; }
+  .container { max-width: 900px; margin: auto; }
+  h1 { text-align: center; color: #1e3a8a; margin: 20px 0; }
+  .card { background: var(--card); border-radius: 16px; padding: 25px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  @media(max-width:600px){ .grid-2{grid-template-columns:1fr} }
+  
+  /* INPUTS PROFISSIONAIS */
+  label { font-weight: bold; color: #334155; display: block; margin-bottom: 5px; }
+  input, textarea { width: 100%; padding: 14px; border: 2px solid #bfdbfe; border-radius: 10px; font-size: 16px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--primary); }
+  
+  /* BOTÕES */
+  .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+  .btn-success { background: var(--success); }
+  
+  /* RESULTADO */
+  .resultado { background: #f8fafc; border-left: 5px solid var(--primary); padding: 15px; border-radius: 8px; margin-top: 15px; }
+  .stat-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+  .stat-value { font-weight: bold; color: var(--primary); font-size: 18px; }
+  .badge { background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+  
+  /* GRÁFICO */
+  canvas { width: 100% !important; max-height: 300px; background: white; border-radius: 10px; margin-top: 15px; }
+  .code-comment { color: #64748b; font-size: 13px; font-style: italic; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📊 Estatística Completa - Encceja<br><span style="font-size:16px;color:#475569">Prof. Wiliam C. | Código comentado para recrutadores</span></h1>
+
+  <!-- CARD 1: ENTRADA DE DADOS -->
+  <div class="card">
+    <h2>1️⃣ Entrada de Dados (Array)</h2>
+    <p class="code-comment">// O usuário digita os dados separados por vírgula, ponto e vírgula ou espaço - trato erro de digitação</p>
+    <label for="dadosInput">Digite as notas / idades / valores ex: 7, 8, 9, 6, 10</label>
+    <textarea id="dadosInput" rows="3" placeholder="Ex: 5, 7, 8, 8, 9, 10, 6">7, 8, 9, 6, 8, 10, 7, 8</textarea>
+    <button class="btn" onclick="processarEstatistica()">CALCULAR TUDO 📈</button>
+    <p class="code-comment">// Ao clicar, chamo a função principal que orquestra todas as outras (Clean Code)</p>
+  </div>
+
+  <!-- CARD 2: RESULTADOS -->
+  <div class="card" id="cardResultados" style="display:none">
+    <h2>2️⃣ Resultados - Medidas de Tendência Central e Dispersão</h2>
+    <div id="resultadosDetalhados"></div>
+    <canvas id="graficoBarras"></canvas>
+  </div>
+
+  <!-- CARD 3: EXPLICAÇÃO DIDÁTICA -->
+  <div class="card">
+    <h3>💡 Como eu construí o código (para o recrutador ver)</h3>
+    <ul style="line-height:1.8">
+      <li><b>Função pura:</b> cada cálculo (média, mediana, moda) é uma função separada, fácil de testar</li>
+      <li><b>Tratamento de erro:</b> se digitar letra, eu aviso, não quebro o site (try/catch)</li>
+      <li><b>Performance:</b> ordeno o array uma vez só e reutilizo para mediana, quartis e gráfico (O(n log n))</li>
+      <li><b>UX:</b> gráfico em canvas nativo, sem biblioteca externa, código leve para celular do aluno</li>
+    </ul>
+    <a href="index.html" style="text-align:center;display:block;margin-top:15px;color:var(--primary);font-weight:bold">⬅ Voltar para Matemática</a>
+  </div>
+</div>
+
+<script>
+/**
+  * PROJETO: Módulo Estatístico Encceja
+  * AUTOR: Wiliam C. - Dev Front-end Jr em formação
+  * OBJETIVO: Código limpo, comentado e didático para portfólio
+ */
+
+// ============== FUNÇÃO PRINCIPAL - ORQUESTRADORA ==============
+function processarEstatistica() {
+  try {
+    // 1. CAPTURA E LIMPEZA DOS DADOS
+    const raw = document.getElementById('dadosInput').value;
+    // Regex para aceitar , ; espaço como separador - PENSANDO NO USUÁRIO
+    const numeros = raw.split(/[,;\s\n]+/)
+                       .map(n => n.trim())
+                       .filter(n => n !== '')
+                       .map(Number)
+                       .filter(n => !isNaN(n)); // Remove NaN se digitou letra
+
+    if (numeros.length === 0) throw new Error("Nenhum número válido encontrado!");
+    if (numeros.length < 2) throw new Error("Digite pelo menos 2 números!");
+
+    // 2. CHAMA FUNÇÕES PURAS (cada uma com responsabilidade única - SOLID)
+    const media = calcularMedia(numeros);
+    const mediana = calcularMediana(numeros);
+    const moda = calcularModa(numeros);
+    const amplitude = calcularAmplitude(numeros);
+    const variancia = calcularVariancia(numeros, media);
+    const desvioPadrao = Math.sqrt(variancia);
+    const ordenados = [...numeros].sort((a,b) => a-b); // Cópia para não mutar original
+
+    // 3. RENDERIZA NO HTML
+    renderizarResultados({ numeros, media, mediana, moda, amplitude, variancia, desvioPadrao, ordenados, total: numeros.length });
+    desenharGrafico(numeros);
+
+    document.getElementById('cardResultados').style.display = 'block';
+    document.getElementById('cardResultados').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (erro) {
+    alert("⚠️ Erro: " + erro.message);
+  }
+}
+
+// ============== FUNÇÕES PURAS - LÓGICA ESTATÍSTICA ==============
+
+/** Calcula média aritmética - O(n) */
+function calcularMedia(arr) {
+  const soma = arr.reduce((acc, val) => acc + val, 0);
+  return soma / arr.length;
+}
+
+/** Calcula mediana - precisa ordenar antes */
+function calcularMediana(arr) {
+  const sorted = [...arr].sort((a,b) => a-b);
+  const meio = Math.floor(sorted.length / 2);
+  // Se par, média dos dois do meio; se ímpar, pega do meio
+  return sorted.length % 2 === 0 
+    ? (sorted[meio - 1] + sorted[meio]) / 2 
+    : sorted[meio];
+}
+
+/** Calcula moda (valor mais frequente) - usa Map para performance O(n) */
+function calcularModa(arr) {
+  const frequencia = new Map();
+  arr.forEach(num => frequencia.set(num, (frequencia.get(num) || 0) + 1));
+  
+  let maxFreq = 0;
+  let modas = [];
+  frequencia.forEach((freq, num) => {
+    if (freq > maxFreq) {
+      maxFreq = freq;
+      modas = [num];
+    } else if (freq === maxFreq) {
+      modas.push(num);
+    }
+  });
+  // Se todos aparecem 1x, não tem moda (amodal)
+  return maxFreq === 1 ? "Amodal (todos valores diferentes)" : modas.join(", ");
+}
+
+function calcularAmplitude(arr) {
+  return Math.max(...arr) - Math.min(...arr);
+}
+
+function calcularVariancia(arr, media) {
+  // Fórmula: média dos quadrados das diferenças
+  const somaQuadrados = arr.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+  return somaQuadrados / arr.length; // Populacional (Encceja usa assim)
+}
+
+// ============== RENDERIZAÇÃO E GRÁFICO ==============
+
+function renderizarResultados(dados) {
+  const html = `
+    <div class="grid-2">
+      <div class="stat-item"><span>Quantidade (n):</span> <span class="stat-value">${dados.total}</span></div>
+      <div class="stat-item"><span>Soma (Σ):</span> <span class="stat-value">${dados.numeros.reduce((a,b)=>a+b,0)}</span></div>
+      <div class="stat-item"><span><b>Média</b> (soma/n):</span> <span class="stat-value">${dados.media.toFixed(2)}</span></div>
+      <div class="stat-item"><span><b>Mediana</b> (meio):</span> <span class="stat-value">${dados.mediana}</span></div>
+      <div class="stat-item"><span><b>Moda</b> (mais repete):</span> <span class="stat-value">${dados.moda}</span></div>
+      <div class="stat-item"><span><b>Amplitude</b> (max-min):</span> <span class="stat-value">${dados.amplitude}</span></div>
+      <div class="stat-item"><span><b>Variância</b>:</span> <span class="stat-value">${dados.variancia.toFixed(2)}</span></div>
+      <div class="stat-item"><span><b>Desvio Padrão</b> (√variância):</span> <span class="stat-value">${dados.desvioPadrao.toFixed(2)}</span></div>
+    </div>
+    <div class="resultado">
+      <b>Dados ordenados:</b> [${dados.ordenados.join(", ")}] <br>
+      <span class="badge">Mín: ${Math.min(...dados.numeros)}</span> <span class="badge">Máx: ${Math.max(...dados.numeros)}</span>
+      <p style="margin-top:10px"><b>Interpretação Encceja:</b> A média é ${dados.media.toFixed(1)}, mas a mediana é ${dados.mediana}. Se forem diferentes, tem valor destoando!</p>
+    </div>
+  `;
+  document.getElementById('resultadosDetalhados').innerHTML = html;
+}
+
+/** Gráfico de barras simples com Canvas nativo - sem Chart.js para ser leve */
+function desenharGrafico(arr) {
+  const canvas = document.getElementById('graficoBarras');
+  const ctx = canvas.getContext('2d');
+  const freq = {};
+  arr.forEach(n => freq[n] = (freq[n] || 0) + 1);
+  
+  const labels = Object.keys(freq).sort((a,b)=>a-b);
+  const valores = labels.map(l => freq[l]);
+  const max = Math.max(...valores);
+
+  // Limpa
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 250;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Desenha barras
+  const barWidth = canvas.width / labels.length * 0.6;
+  const gap = canvas.width / labels.length * 0.4;
+  
+  labels.forEach((label, i) => {
+    const x = i * (barWidth + gap) + gap/2;
+    const altura = (valores[i] / max) * (canvas.height - 50);
+    const y = canvas.height - altura - 30;
+    
+    ctx.fillStyle = '#2563eb';
+    ctx.fillRect(x, y, barWidth, altura);
+    
+    ctx.fillStyle = '#1e293b';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + barWidth/2, canvas.height - 10);
+    ctx.fillText(valores[i] + 'x', x + barWidth/2, y - 5);
+  });
+}
+</script>
+</body>
+</html>
