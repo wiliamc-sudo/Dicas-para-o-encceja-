@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dicas Encceja 2026</title>
+<style>
+body{font-family:Arial;text-align:center;padding:40px;background:#f5f5f5}
+.card{background:white;padding:20px;border-radius:12px;max-width:600px;margin:auto;box-shadow:0 4px 10px #0001}
+a{display:block;margin:10px;padding:12px;background:#2563eb;color:white;border-radius:8px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>📚 Dicas Encceja 2026</h1>
+<p>Plataforma gratuita para quem vai fazer o Encceja</p>
+<a href="#">Matemática - Em breve</a>
+<a href="#">Redação Nota 10 - Em breve</a>
+<a href="#">Simulados - Em breve</a>
+<a href="#">Ciências Humanas - Em breve</a>
+</div>
+</body>
+</html>
