@@ -53,3 +53,76 @@ document.getElementById('texto').innerText=txt;
 </a>
 </div>
 <a href="calculadora.html" style="display:block;background:#16a34a;color:white;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin:10px 0">🧮 CALCULADORA - CLIQUE AQUI</a>
+<div style="background:white;border-radius:16px;padding:20px;margin:20px 0;box-shadow:0 8px 25px rgba(0,0,0,0.08)">
+<h2>📊 Estatística Completa - Código Comentado</h2>
+<p style="color:#64748b;font-size:14px">// Cada função faz uma coisa só - Clean Code</p>
+
+<label style="font-weight:bold">Digite os valores: ex: 7, 8, 9, 6, 10</label>
+<textarea id="dados" rows="2" style="width:100%;padding:12px;border:2px solid #bfdbfe;border-radius:10px" placeholder="7, 8, 9, 6, 8, 10">7, 8, 9, 6, 8, 10, 7, 8</textarea>
+
+<button onclick="calcEstatistica()" style="background:#9333ea;color:white;border:none;padding:14px;border-radius:10px;width:100%;font-weight:bold;margin-top:10px;cursor:pointer">CALCULAR TUDO 📈</button>
+
+<div id="resEstatistica" style="margin-top:15px;display:none"></div>
+<canvas id="grafico" style="width:100%;max-height:250px;margin-top:10px"></canvas>
+</div>
+
+<script>
+// AUTOR: Wiliam C. - Dev Front-end Jr
+// OBJETIVO: Código limpo para portfólio - SOLID
+
+function calcEstatistica(){
+ try{
+  // 1. LIMPA E CONVERTE DADOS - trata erro de digitação
+  const raw = document.getElementById('dados').value;
+  const nums = raw.split(/[,;\s]+/).map(Number).filter(n=>!isNaN(n));
+  if(nums.length < 2) throw new Error("Digite 2 números no mínimo");
+
+  // 2. FUNÇÕES PURAS - cada uma com responsabilidade única
+  const media = nums.reduce((a,b)=>a+b,0) / nums.length;
+  const sorted = [...nums].sort((a,b)=>a-b);
+  const meio = Math.floor(sorted.length/2);
+  const mediana = sorted.length%2==0 ? (sorted[meio-1]+sorted[meio])/2 : sorted[meio];
+  
+  // Moda com Map - O(n) - performance
+  const freqMap = new Map();
+  nums.forEach(n=>freqMap.set(n,(freqMap.get(n)||0)+1));
+  let maxF=0, modas=[];
+  freqMap.forEach((f,n)=>{ if(f>maxF){maxF=f; modas=[n]} else if(f==maxF){modas.push(n)} });
+  const moda = maxF==1 ? "Amodal" : modas.join(", ");
+
+  const amplitude = Math.max(...nums) - Math.min(...nums);
+  const variancia = nums.reduce((acc,v)=>acc+Math.pow(v-media,2),0)/nums.length;
+  const desvio = Math.sqrt(variancia);
+
+  // 3. RENDERIZA - separo lógica de visualização
+  document.getElementById('resEstatistica').style.display='block';
+  document.getElementById('resEstatistica').innerHTML = `
+   <div style="background:#f8fafc;border-left:4px solid #9333ea;padding:12px;border-radius:8px">
+    <div style="display:flex;justify-content:space-between"><span>Média:</span><b style="color:#9333ea">${media.toFixed(2)}</b></div>
+    <div style="display:flex;justify-content:space-between"><span>Mediana:</span><b style="color:#9333ea">${mediana}</b></div>
+    <div style="display:flex;justify-content:space-between"><span>Moda:</span><b style="color:#9333ea">${moda}</b></div>
+    <div style="display:flex;justify-content:space-between"><span>Amplitude:</span><b>${amplitude}</b></div>
+    <div style="display:flex;justify-content:space-between"><span>Desvio Padrão:</span><b>${desvio.toFixed(2)}</b></div>
+    <div style="display:flex;justify-content:space-between"><span>Variância:</span><b>${variancia.toFixed(2)}</b></div>
+    <p style="margin-top:8px;font-size:13px;color:#475569">Ordenados: [${sorted.join(", ")}]</p>
+   </div>`;
+
+  // 4. GRÁFICO NATIVO - sem biblioteca, código leve
+  const canvas = document.getElementById('grafico');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height=200;
+  const freq = {}; nums.forEach(n=>freq[n]=(freq[n]||0)+1);
+  const labels = Object.keys(freq).sort((a,b)=>a-b);
+  const vals = labels.map(l=>freq[l]); const max = Math.max(...vals);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const bw = canvas.width/labels.length*0.6; const gap = canvas.width/labels.length*0.4;
+  labels.forEach((lab,i)=>{
+   const x = i*(bw+gap)+gap/2; const h = (vals[i]/max)*(canvas.height-40); const y = canvas.height-h-20;
+   ctx.fillStyle='#9333ea'; ctx.fillRect(x,y,bw,h);
+   ctx.fillStyle='#1e293b'; ctx.font='12px Arial'; ctx.textAlign='center';
+   ctx.fillText(lab, x+bw/2, canvas.height-5); ctx.fillText(vals[i]+'x', x+bw/2, y-5);
+  });
+
+ }catch(e){ alert("⚠️ "+e.message); }
+}
+</script>
