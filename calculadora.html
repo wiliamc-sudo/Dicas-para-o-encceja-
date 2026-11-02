@@ -1,0 +1,43 @@
+<div class="card">
+<h2>🧮 Calculadora Encceja</h2>
+<p>Para treinar as contas na hora da prova!</p>
+
+<input id="calc" style="width:100%;padding:15px;font-size:22px;border:2px solid #bfdbfe;border-radius:10px;text-align:right;font-weight:bold" placeholder="0" readonly>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
+<button class="btn" style="background:#ef4444" onclick="limpa()">C</button>
+<button class="btn" onclick="add('/')">÷</button>
+<button class="btn" onclick="add('*')">x</button>
+<button class="btn" onclick="apaga()">⌫</button>
+
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('7')">7</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('8')">8</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('9')">9</button>
+<button class="btn" onclick="add('-')">-</button>
+
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('4')">4</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('5')">5</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('6')">6</button>
+<button class="btn" onclick="add('+')">+</button>
+
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('1')">1</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('2')">2</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('3')">3</button>
+<button class="btn" style="background:#16a34a" onclick="calcIgual()">=</button>
+
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe;grid-column:span 2" onclick="add('0')">0</button>
+<button class="btn" style="background:white;color:#1e3a8a;border:2px solid #bfdbfe" onclick="add('.')">.</button>
+</div>
+<p style="text-align:center;color:#64748b;margin-top:10px;font-size:14px">💡 Dica: Use para conferir as frações!</p>
+</div>
+
+<script>
+let visor = document.getElementById('calc');
+function add(v){ visor.value += v; }
+function limpa(){ visor.value = ''; }
+function apaga(){ visor.value = visor.value.slice(0,-1); }
+function calcIgual(){
+ try{ visor.value = eval(visor.value); }
+ catch{ visor.value = 'Erro'; }
+}
+</script>
