@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - Dicas Encceja</title>
+<style>
+ body{margin:0;font-family:Inter,Arial;background:#FFFFFF;color:#0f172a;display:flex;min-height:100vh;align-items:center;justify-content:center}
+ .box{background:white;border:1px solid #e2e8f0;border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(15,23,42,0.08);width:90%;max-width:380px}
+ .input{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;box-sizing:border-box}
+ .btn{width:100%;background:#1e3a8a;color:white;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:10px}
+ .btn:hover{background:#0f172a}
+ a{color:#1e3a8a;text-decoration:none;font-weight:bold}
+ .foto-login{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #1e3a8a;display:block;margin:0 auto 10px}
+</style>
+</head>
+<body>
+<div class="box">
+ <img src="IMG-20261102-WA2909.jpg" class="foto-login" alt="login">
+ <h2 style="text-align:center;color:#1e3a8a;margin:5px">Entrar</h2>
+ <p style="text-align:center;font-size:13px;color:#64748b">Área do Aluno - Encceja</p>
+ <input id="email" class="input" type="email" placeholder="Seu e-mail (UFF ou pessoal)">
+ <input id="senha" class="input" type="password" placeholder="Sua senha">
+ <button class="btn" onclick="fazerLogin()">Entrar</button>
+ <p style="text-align:center;margin-top:15px;font-size:14px">Não tem conta? <a href="cadastro.html">Cadastre-se</a><br><br><a href="index.html">← Voltar</a></p>
+ <p id="msg" style="text-align:center;color:red;font-size:13px"></p>
+</div>
+<script>
+ function fazerLogin(){
+  const email = document.getElementById('email').value
+  const senha = document.getElementById('senha').value
+  const usuarios = JSON.parse(localStorage.getItem('usuarios_encceja') || '[]')
+  const achou = usuarios.find(u => u.email===email && u.senha===senha)
+  if(achou){
+   localStorage.setItem('logado_encceja', JSON.stringify(achou))
+   window.location.href = 'area-aluno.html'
+  } else {
+   document.getElementById('msg').innerText = 'E-mail ou senha errados. Cadastre-se primeiro.'
+  }
+ }
+</script>
+</body>
+</html>
