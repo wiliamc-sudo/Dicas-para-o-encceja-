@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cadastro - Dicas Encceja</title>
+<style>
+ body{margin:0;font-family:Inter,Arial;background:#FFFFFF;color:#0f172a;display:flex;min-height:100vh;align-items:center;justify-content:center}
+ .box{background:white;border:1px solid #e2e8f0;border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(15,23,42,0.08);width:90%;max-width:380px}
+ .input{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;box-sizing:border-box}
+ .btn{width:100%;background:#1e3a8a;color:white;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="box">
+ <h2 style="text-align:center;color:#1e3a8a">Criar Conta</h2>
+ <input id="nome" class="input" placeholder="Seu nome">
+ <input id="email" class="input" type="email" placeholder="E-mail">
+ <input id="senha" class="input" type="password" placeholder="Crie uma senha">
+ <button class="btn" onclick="cadastrar()">Cadastrar e Entrar</button>
+ <p style="text-align:center;margin-top:15px"><a href="login.html" style="color:#1e3a8a;font-weight:bold">Já tenho conta</a></p>
+ <p id="msg" style="text-align:center;color:green;font-size:13px"></p>
+</div>
+<script>
+ function cadastrar(){
+  const nome=document.getElementById('nome').value, email=document.getElementById('email').value, senha=document.getElementById('senha').value
+  if(!nome||!email||!senha){alert('Preencha tudo');return}
+  const usuarios=JSON.parse(localStorage.getItem('usuarios_encceja')||'[]')
+  if(usuarios.find(u=>u.email===email)){alert('Esse e-mail já existe, faça login');return}
+  usuarios.push({nome,email,senha})
+  localStorage.setItem('usuarios_encceja',JSON.stringify(usuarios))
+  localStorage.setItem('logado_encceja',JSON.stringify({nome,email}))
+  window.location.href='area-aluno.html'
+ }
+</script>
+</body>
+</html>
