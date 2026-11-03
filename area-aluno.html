@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Área do Aluno</title>
+<style>body{margin:0;font-family:Inter,Arial;background:#FFFFFF} .top{background:#0f172a;color:white;padding:20px;text-align:center} .wrap{max-width:800px;margin:auto;padding:20px} .card{background:white;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(15,23,42,0.08)} .btn{background:#1e3a8a;color:white;padding:10px 16px;border-radius:10px;text-decoration:none;border:none;cursor:pointer}</style>
+</head>
+<body>
+<div class="top">Dicas para o Encceja - Área do Aluno</div>
+<div class="wrap"><div class="card">
+<h2 id="bemvindo" style="color:#1e3a8a"></h2>
+<p>Você está logado! Aqui vai entrar: simulados, calculadora exclusiva, progresso.</p>
+<p><b>Formação UFF:</b> Como futuro licenciado em Matemática, você pode liberar conteúdo exclusivo aqui.</p>
+<button class="btn" onclick="sair()">Sair</button>
+<a href="index.html" class="btn" style="background:#0f172a;margin-left:8px">Início</a>
+</div></div>
+<script>
+ const logado=JSON.parse(localStorage.getItem('logado_encceja')||'null')
+ if(!logado){window.location.href='login.html'}
+ else{document.getElementById('bemvindo').innerText='Olá, '+logado.nome+'! 🎓'}
+ function sair(){localStorage.removeItem('logado_encceja');window.location.href='login.html'}
+</script>
+</body>
+</html>
